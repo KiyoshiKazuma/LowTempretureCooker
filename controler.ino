@@ -10,15 +10,24 @@ void controler_init(void) {
 
 void controler_main(void) {
   static uint16_t temp;
+  static uint8_t cnt_temp;
+      
   Serial.println(stm);
   switch (stm) {
     case ST_INIT:
       if(sensor_check_state()==1){
+        cnt_temp=100;
         stm=ST_SETTING;
       }
       break;
     case ST_SETTING:
-      stm=ST_RUNNING;
+      if(cnt_temp==0){
+              stm=ST_RUNNING;
+      }else if(cnt_temp>0){
+        cnt_temp--;
+      }else{
+        cnt_temp=0;
+      }
       break;
     case ST_RUNNING:
       temp=sensor_get_value();

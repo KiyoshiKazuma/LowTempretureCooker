@@ -1,5 +1,8 @@
 #ifndef COMMON_D
 #define COMMON_D
+
+#define PIN_DEBUG (9)
+
   enum lcd_contents{
   LC_NONE,
   LC_TEMP,
