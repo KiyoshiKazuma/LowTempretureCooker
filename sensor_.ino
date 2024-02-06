@@ -8,8 +8,6 @@ uint16_t temp;
 uint8_t sensor_stm;
 uint8_t sensor_cnt;
 
-
-
 void sensor_init(void) {
   sensor_stm = ST_SENSOR_STOP;
   temp=0;
