@@ -22,20 +22,7 @@ void lcd_init(void) {
   line2_cnt = 0x10;
   
   display_content[0]=LC_TEMP;
-}
-
-char int2char(uint16_t value, uint8_t digit) {
-  uint8_t num = 0;
-  if (digit == 0) {
-    num = ((value && 0xF) * 10 / 16) % 10;
-  } else {
-    num = (value >> 4) * (uint8_t)pow(10, digit - 1) % 10;
-  }
-  if (num == 0) {
-    return ' ';
-  } else {
-    return '0' + num;
-  }
+  display_content[1]=LC_TIMER;
 }
 
 void lcd_set_tempreture(uint16_t temp) {
@@ -47,7 +34,7 @@ void lcd_set_tempreture(uint16_t temp) {
 
 void lcd_set_timer(uint16_t timer) {
   lcd_timer = timer;
-  update_flag = 3;
+  update_flag = 1;
 }
 
 void lcd_main(void) {
@@ -61,11 +48,20 @@ void lcd_update(void){
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd_display(display_content[0]);
-    lcd.setCursor(1, 0);
+    lcd.setCursor(0, 1);
     lcd_display(display_content[1]);  
 }
 
+void print_time(uint8_t num){
+  if(num>=10){
+    lcd.print(num);
+  }else if(num<10){
+    lcd.print(0);
+    lcd.print(num);
+  }
+}
 void lcd_display(uint8_t lcd_content) {
+  uint8_t hour,min,sec;
   switch (lcd_content) {
     case LC_NONE:
       break;
@@ -77,6 +73,17 @@ void lcd_display(uint8_t lcd_content) {
       lcd.print(" 'C");
       break;
     case LC_TIMER:
+      hour=((lcd_timer/60)/60)%100;
+      min=(lcd_timer/60)%60;
+      sec=lcd_timer%60;
+
+      lcd.print("TIME : ");
+      print_time(hour);
+      lcd.print(":");
+      print_time(min);
+      lcd.print(":");
+      print_time(sec);
+
       break;
     case LC_MODE:
       break;
