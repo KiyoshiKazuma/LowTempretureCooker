@@ -7,7 +7,7 @@ void TASK_100(void);  //100ms task
 void TASK_10(void);    //1ms task
 void TASK(void);
 
-uint8_t cnt_task;
+uint32_t cnt_task;
 
 void setup() {
   pinMode(13, OUTPUT);
