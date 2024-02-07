@@ -8,6 +8,7 @@ void TASK_10(void);    //1ms task
 void TASK(void);
 
 uint32_t cnt_task;
+bool task_lcd_flag;
 
 void setup() {
   pinMode(13, OUTPUT);
@@ -23,7 +24,10 @@ void setup() {
 }
 
 void loop() {
-  lcd_main();
+  if(task_lcd_flag){
+    lcd_main();
+    task_lcd_flag=false;
+  }
 }
 
 void TASK() {
@@ -58,4 +62,5 @@ void TASK_1000(void) {
   static uint16_t time_cnt=0;
   time_cnt++;
   lcd_set_timer(time_cnt);
+  task_lcd_flag=true;
 }

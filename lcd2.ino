@@ -39,9 +39,6 @@ void lcd_init(void) {
   display.display();
 }
 
-void lcd_set_update_flag(void) {
-  lcd_flag |= 1;
-}
 
 // char int2char(uint8_t value, uint8_t digit) {
 //   uint8_t num = 0;
@@ -54,27 +51,42 @@ void lcd_set_update_flag(void) {
 
 void lcd_set_tempreture(uint16_t temp) {
   lcd_temp = temp;
-  lcd_set_update_flag();
+  lcd_flag |= 1;
 }
 
 void lcd_set_timer(uint16_t timer) {
   lcd_timer = timer;
-  lcd_set_update_flag();
+  lcd_flag |= 2;
 }
 
 void lcd_main(void) {
-  if (lcd_flag) {
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    lcd_print_temp();
-    lcd_flag = 0;
-  }
+  display.clearDisplay();
+  lcd_print_temp();
+  lcd_print_timer();
+  display.display();
+  lcd_flag=0;
 }
 
 void lcd_print_temp(void) {
-  display.print("temp : ");
-  display.print(lcd_temp/16);
+  display.setCursor(0, 0);
+  display.print("temp:");
+  display.print(lcd_temp / 16);
   display.print(".");
-  display.print(((lcd_temp*10)/16)%10);
-  display.display();
+  display.print(((lcd_temp * 10) / 16) % 10);
+  
+}
+
+void lcd_print_timer(void) {
+  uint8_t hour, min, sec;
+  hour = (lcd_timer / 60 / 60) % 100;
+  min = (lcd_timer / 60) % 60;
+  sec = lcd_timer % 60;
+
+  display.setCursor(0, 20);
+  display.print("T:");
+  display.print(hour);
+  display.print(":");
+  display.print(min);
+  display.print(":");
+  display.print(sec);
 }

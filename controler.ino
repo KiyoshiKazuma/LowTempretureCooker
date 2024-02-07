@@ -27,7 +27,6 @@ void controler_main(void) {
       }else{
         heater_off();
       }
-
       lcd_set_tempreture(temp);
       
       break;
