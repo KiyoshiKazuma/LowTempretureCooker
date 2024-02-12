@@ -1,23 +1,8 @@
-#define PIN_SIZE (4)
-
-#define PIN_1 (8)
-#define PIN_2 (9)
-#define PIN_3 (10)
-#define PIN_4 (11)
+#include "common.h"
 
 #define T_PUSH (10)
 #define T_LONG_PUSH (40)
 #define T_LONG_PUSHING (20)
-
-enum {
-  SW_OFF,
-  SW_ON,
-  SW_PUSHING,
-  SW_PUSHED,
-  SW_LONG_PUSH,
-  SW_LONG_PUSHING
-};
-
 
 uint8_t sw_state[PIN_SIZE];
 uint8_t sw_cnt[PIN_SIZE];
@@ -92,7 +77,7 @@ void switch_main(void) {
   }
 }
 
-void switch_read(uint8_t i) {
+uint8_t switch_read(uint8_t i) {
   switch (sw_state[i]) {
     case SW_PUSHED:
       sw_state[i]=SW_OFF;
@@ -109,7 +94,7 @@ void switch_read(uint8_t i) {
         return 3;
       }
       return 0;
-      
+
     case SW_OFF:
     case SW_ON:
     case SW_PUSHING:

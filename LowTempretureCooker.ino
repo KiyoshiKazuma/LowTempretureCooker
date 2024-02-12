@@ -16,6 +16,7 @@ void setup() {
   Serial.begin(9600);
   sensor_init();
   lcd_init();
+  switch_init();
   cnt_task=0;
   MsTimer2::set(10, TASK);
   MsTimer2::start();
@@ -48,6 +49,7 @@ void TASK() {
 }
 
 void TASK_10(void) {
+  switch_main();
 
 }
 void TASK_100(void) {

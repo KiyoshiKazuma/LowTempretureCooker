@@ -17,10 +17,13 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define LOGO_HEIGHT 16
 #define LOGO_WIDTH 16
 
+#define LCD_LINE (3)
+
 uint16_t lcd_temp;
 uint16_t lcd_timer;
 
 uint8_t lcd_flag = 0;
+uint8_t lcd_content[3];
 
 void lcd_init(void) {
   lcd_flag = 0;
@@ -29,6 +32,9 @@ void lcd_init(void) {
     Serial.println(F("SSD1306 allocation failed"));
     for (;;)
       ;  // Don't proceed, loop forever
+  }
+  for (int i = 0; i < LCD_LINE; i++) {
+    lcd_content[i] = LC_NONE;
   }
   display.clearDisplay();
   display.setTextSize(2);               // Normal 1:1 pixel scale
@@ -40,14 +46,9 @@ void lcd_init(void) {
 }
 
 
-// char int2char(uint8_t value, uint8_t digit) {
-//   uint8_t num = 0;
-//   for (uint8_t i = 0; i < digit; i++) {
-//     value /= 10;
-//   }
-//   num = value % 10;
-//   return '0' + num;
-// }
+void set_line(uint8_t line,uint8_t content){
+
+}
 
 void lcd_set_tempreture(uint16_t temp) {
   lcd_temp = temp;
@@ -61,19 +62,31 @@ void lcd_set_timer(uint16_t timer) {
 
 void lcd_main(void) {
   display.clearDisplay();
-  lcd_print_temp();
-  lcd_print_timer();
+  for (uint8_t line = 0; line < LCD_LINE; line++) {
+    display.setCursor(0, 20 * line);
+    switch (lcd_content[line]) {
+      case LC_TEMP:
+        lcd_print_temp();
+        break;
+      case LC_TIMER:
+        lcd_print_timer();
+        break;
+      case LC_NONE:
+      case LC_MODE:
+      case LC_HEATER_STATE:
+      default:
+        break;
+    }
+  }
   display.display();
-  lcd_flag=0;
+  lcd_flag = 0;
 }
 
 void lcd_print_temp(void) {
-  display.setCursor(0, 0);
   display.print("temp:");
   display.print(lcd_temp / 16);
   display.print(".");
   display.print(((lcd_temp * 10) / 16) % 10);
-  
 }
 
 void lcd_print_timer(void) {
