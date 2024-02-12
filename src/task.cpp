@@ -1,34 +1,24 @@
+#include <Arduino.h>
 #include <MsTimer2.h>
-#include <OneWire.h>
+#include <inttypes.h>
+#include "task.h"
+#include "sensor.h"
+#include "controler.h"
+#include "switch.h"
 
-void TASK_1000(void);
+void TASK_1000(void); //1000ms task
 void TASK_500(void);  //500ms task
 void TASK_100(void);  //100ms task
-void TASK_10(void);    //1ms task
+void TASK_10(void);   //10ms task
 void TASK(void);
 
-uint32_t cnt_task;
-bool task_lcd_flag;
+bool task_lcd_flag=true;
+static uint32_t cnt_task;
 
-void setup() {
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  Serial.begin(9600);
-  sensor_init();
-  lcd_init();
-  switch_init();
+void task_init(void){    
   cnt_task=0;
-  MsTimer2::set(10, TASK);
+  MsTimer2::set(10, TASK);  
   MsTimer2::start();
-
-  sensor_begin();
-}
-
-void loop() {
-  if(task_lcd_flag){
-    lcd_main();
-    task_lcd_flag=false;
-  }
 }
 
 void TASK() {
@@ -50,19 +40,19 @@ void TASK() {
 
 void TASK_10(void) {
   switch_main();
-
 }
 void TASK_100(void) {
   sensor_main();
-  controler_main();
+  ctrl_main();
+  //timer_main();
 }
 void TASK_500(void) {
   digitalWrite(13, !digitalRead(13));
 }
 
 void TASK_1000(void) {
-  static uint16_t time_cnt=0;
-  time_cnt++;
-  lcd_set_timer(time_cnt);
+  // static uint16_t time_cnt=0;
+  // time_cnt++;
+  // lcd_set_timer(time_cnt);
   task_lcd_flag=true;
 }

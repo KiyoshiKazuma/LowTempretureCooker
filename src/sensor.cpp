@@ -1,6 +1,9 @@
-#include "common.h"
+#include <OneWire.h>
+#include <inttypes.h>
+#include "pin.h"
+#include "sensor.h"
 
-OneWire ds(10);
+OneWire ds(PIN_SENSOR);
 
 uint8_t addr[8];
 uint8_t data[9];

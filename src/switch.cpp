@@ -1,23 +1,21 @@
-#include "common.h"
-
-#define T_PUSH (10)
-#define T_LONG_PUSH (40)
-#define T_LONG_PUSHING (20)
+#include<Arduino.h>
+#include<inttypes.h>
+#include<switch.h>
 
 uint8_t sw_state[PIN_SIZE];
 uint8_t sw_cnt[PIN_SIZE];
-uint8_t sw_pin[PIN_SIZE] = {
-  PIN_1,
-  PIN_2,
-  PIN_3,
-  PIN_4
-};
+uint8_t sw_pin[PIN_SIZE];
 
 void switch_init(void) {
+    sw_pin[SW_OK]=PIN_OK;
+    sw_pin[SW_CANCEL]=PIN_CANCEL;
+    sw_pin[SW_UP]=PIN_UP;
+    sw_pin[SW_DOWN]=PIN_DOWN;
+
   for (int i = 0; i < PIN_SIZE; i++) {
+    pinMode(sw_pin[i],INPUT_PULLUP);
     sw_state[i] = SW_OFF;
     sw_cnt[i] = 0;
-    ;
   }
 }
 
