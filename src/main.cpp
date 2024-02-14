@@ -13,6 +13,7 @@ void setup()
   pinMode(13, OUTPUT);
   Serial.begin(9600);
 
+  timer_init();
   switch_init();
   ctrl_init();
   lcd_init();

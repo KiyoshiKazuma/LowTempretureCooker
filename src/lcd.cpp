@@ -43,7 +43,7 @@ void lcd_main(void)
 
   for (uint8_t i = 0; i < 3; i++)
   {
-    display.setCursor(0, i * 20);
+    display.setCursor(0, i * 10);
     lcd_print_content(lcd_contents[i]);
   }
   display.display();
@@ -98,10 +98,11 @@ void lcd_print_content(uint8_t content)
 
 void lcd_print_temp(void)
 {
-  display.print("temp:");
+  display.print("Temp :");
   display.print(lcd_temp / 16);
   display.print(".");
   display.print(((lcd_temp * 10) / 16) % 10);
+  display.print(" C");
 }
 
 void lcd_print_timer(void)
@@ -110,32 +111,45 @@ void lcd_print_timer(void)
   hour = (lcd_timer / 60 / 60) % 100;
   min = (lcd_timer / 60) % 60;
   sec = lcd_timer % 60;
-  display.print("T:");
+  display.print("Timer:");
+  if (hour < 10)
+  {
+    display.print(0);
+  }
   display.print(hour);
   display.print(":");
+  if (min < 10)
+  {
+    display.print(0);
+  }
   display.print(min);
   display.print(":");
+  if (sec < 10)
+  {
+    display.print(0);
+  }
   display.print(sec);
 }
 
 void lcd_print_stm(void)
 {
+  display.print("Mode :");
   switch (ctrl_get_stm())
   {
   case ST_INIT:
-    display.print("STM:INIT");
+    display.print("INIT");
     break;
   case ST_SETTING:
-    display.print("STM:SETTING");
+    display.print("SETTING");
     break;
   case ST_RUNNING:
-    display.print("STM:RUNNING");
+    display.print("RUNNING");
     break;
   case ST_STOP:
-    display.print("STM:STOP");
+    display.print("STOP");
     break;
   case ST_ERROR:
-    display.print("STM:ERROR");
+    display.print("ERROR");
     break;
   default:
     break;

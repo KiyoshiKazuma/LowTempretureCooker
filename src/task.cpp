@@ -5,6 +5,7 @@
 #include "sensor.h"
 #include "controler.h"
 #include "switch.h"
+#include "timer.h"
 
 void TASK_1000(void); //1000ms task
 void TASK_500(void);  //500ms task
@@ -44,7 +45,8 @@ void TASK_10(void) {
 void TASK_100(void) {
   sensor_main();
   ctrl_main();
-  //timer_main();
+  timer_main();
+  task_lcd_flag=true;
 }
 void TASK_500(void) {
   digitalWrite(13, !digitalRead(13));
@@ -54,7 +56,6 @@ void TASK_1000(void) {
   // static uint16_t time_cnt=0;
   // time_cnt++;
   // lcd_set_timer(time_cnt);
-  task_lcd_flag=true;
   
   for(int i=0;i<4;i++){
     Serial.print(switch_read(i));

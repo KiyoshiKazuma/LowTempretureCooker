@@ -2,9 +2,9 @@
 #define _SENSOR_H_
 #include "pin.h"
 
-#define T_PUSH (10)
-#define T_LONG_PUSH (40)
-#define T_LONG_PUSHING (20)
+#define T_PUSH (5)
+#define T_LONG_PUSH (20)
+#define T_LONG_PUSHING (10)
 
 enum {
   SW_OFF,
