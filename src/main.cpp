@@ -5,12 +5,14 @@
 #include "heater.h"
 #include "lcd.h"
 #include "controler.h"
+#include "timer.h"
 
 void setup()
 {
   pinMode(13, OUTPUT);
   Serial.begin(9600);
 
+  timer_init();
   ctrl_init();
   lcd_init();
   heater_init();
