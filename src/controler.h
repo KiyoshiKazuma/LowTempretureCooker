@@ -8,6 +8,11 @@ enum {
   ST_ERROR
 };
 
+enum{
+  PRM_TIMER,
+  PRM_TEMP
+};
+
 void ctrl_init(void);
 void ctrl_main(void);
 uint8_t ctrl_get_stm(void);

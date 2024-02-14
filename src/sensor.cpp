@@ -39,6 +39,7 @@ uint8_t sensor_check_state(void){
 }
 
 void sensor_main(void) {
+  uint16_t tmp_temp;
   switch (sensor_stm) {
     case ST_SENSOR_WAIT_CONNECT:
       if (!ds.search(addr)) {
@@ -79,7 +80,8 @@ void sensor_main(void) {
         data[i] = ds.read();
       }
 
-      temp = (data[1] << 8) + data[0];
+      tmp_temp = (data[1] << 8) + data[0];
+      temp=(tmp_temp*10)/16;
       sensor_stm=ST_SENSOR_CONVERT;
   }
 }

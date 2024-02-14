@@ -79,17 +79,17 @@ uint8_t switch_read(uint8_t i) {
   switch (sw_state[i]) {
     case SW_PUSHED:
       sw_state[i]=SW_OFF;
-      return 1;
+      return SW_PUSHED;
 
     case SW_LONG_PUSH:
       sw_state[i]=SW_LONG_PUSHING;
       sw_cnt[i]-=T_LONG_PUSH;
-      return 2;
+      return SW_LONG_PUSH;
 
     case SW_LONG_PUSHING:
       if(sw_cnt[i]>T_LONG_PUSHING){
         sw_cnt[i]-=T_LONG_PUSHING;
-        return 3;
+        return SW_LONG_PUSHING;
       }
       return 0;
 

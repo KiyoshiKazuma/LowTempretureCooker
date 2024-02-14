@@ -2,17 +2,20 @@
 #include "lcd.h"
 #include "pin.h"
 #include "controler.h"
+#include "heater.h"
 
 void lcd_print_temp(void);
 void lcd_print_timer(void);
 void lcd_print_stm(void);
+void lcd_print_heater_state(void);
 void lcd_print_content(uint8_t content);
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 uint16_t lcd_temp;
 uint16_t lcd_timer;
+uint8_t lcd_heater_state;
 uint8_t lcd_flag = 0;
-uint8_t lcd_contents[3];
+uint8_t lcd_contents[LCD_ROW];
 
 void lcd_init(void)
 {
@@ -31,7 +34,7 @@ void lcd_init(void)
   display.cp437(true);                 // Use full 256 char 'Code Page 437' font
   display.print("BEGIN");
   display.display();
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < LCD_ROW; i++)
   {
     lcd_contents[i] = LC_NONE;
   }
@@ -41,7 +44,7 @@ void lcd_main(void)
 {
   display.clearDisplay();
 
-  for (uint8_t i = 0; i < 3; i++)
+  for (uint8_t i = 0; i < LCD_ROW; i++)
   {
     display.setCursor(0, i * 10);
     lcd_print_content(lcd_contents[i]);
@@ -62,9 +65,15 @@ void lcd_set_timer(uint16_t timer)
   lcd_flag |= 2;
 }
 
+void lcd_set_heater_state(uint8_t on_off)
+{
+  lcd_heater_state=on_off;
+  lcd_flag |=4;
+}
+
 void lcd_set_content(uint8_t line, uint8_t content)
 {
-  if (line < 3)
+  if (line < LCD_ROW)
   {
     lcd_contents[line] = content;
   }
@@ -87,6 +96,7 @@ void lcd_print_content(uint8_t content)
     lcd_print_stm();
     break;
   case LC_HEATER_STATE:
+    lcd_print_heater_state();
     break;
   case LC_INIT:
     break;
@@ -99,9 +109,9 @@ void lcd_print_content(uint8_t content)
 void lcd_print_temp(void)
 {
   display.print("Temp :");
-  display.print(lcd_temp / 16);
+  display.print(lcd_temp /10);
   display.print(".");
-  display.print(((lcd_temp * 10) / 16) % 10);
+  display.print(lcd_temp % 10);
   display.print(" C");
 }
 
@@ -154,4 +164,13 @@ void lcd_print_stm(void)
   default:
     break;
   }
+}
+
+void lcd_print_heater_state(void){
+  if(lcd_heater_state){
+    display.print("POWER:ON");
+  }else{
+    display.print("POWER:OFF");  
+  }
+
 }

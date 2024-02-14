@@ -13,6 +13,8 @@
 #define LOGO_HEIGHT 16
 #define LOGO_WIDTH 16
 
+#define LCD_ROW (6)
+
   enum lcd_contents{
   LC_NONE,
   LC_TEMP,
@@ -27,6 +29,7 @@ void lcd_init(void);
 void lcd_main(void);
 void lcd_set_tempreture(uint16_t temp);
 void lcd_set_timer(uint16_t timer);
+void lcd_set_heater_state(uint8_t on_off);
 
 
 #endif //_LCD_H_
