@@ -55,4 +55,11 @@ void TASK_1000(void) {
   // time_cnt++;
   // lcd_set_timer(time_cnt);
   task_lcd_flag=true;
+  
+  for(int i=0;i<4;i++){
+    Serial.print(switch_read(i));
+    Serial.print("  ");
+  }
+  Serial.println("");
+
 }

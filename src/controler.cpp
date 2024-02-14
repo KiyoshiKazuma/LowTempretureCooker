@@ -36,6 +36,10 @@ void ctrl_main(void) {
     case ST_INIT:
       heater_off();
       if (sensor_check_state() == 1) {
+        lcd_set_content(0,LC_STM);
+        lcd_set_content(1,LC_TEMP);
+        lcd_set_content(2,LC_TIMER);
+        ctrl_timer=60*60*3; //3h timer 
         stm = ST_SETTING;
       }
       break;

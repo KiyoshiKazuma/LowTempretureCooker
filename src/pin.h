@@ -7,9 +7,9 @@
 
 #define PIN_SIZE (4) //amount of input pins
 
-#define PIN_OK (8)
-#define PIN_CANCEL (7)
-#define PIN_UP (6)
-#define PIN_DOWN (5)
+#define PIN_OK (5)
+#define PIN_CANCEL (6)
+#define PIN_UP (7)
+#define PIN_DOWN (8)
 
 #endif //_PIN_H_

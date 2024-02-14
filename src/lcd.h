@@ -17,11 +17,12 @@
   LC_NONE,
   LC_TEMP,
   LC_TIMER,
-  LC_MODE,
+  LC_STM,
   LC_HEATER_STATE,
   LC_INIT
 };
 
+void lcd_set_content(uint8_t line,uint8_t content);
 void lcd_init(void);
 void lcd_main(void);
 void lcd_set_tempreture(uint16_t temp);
