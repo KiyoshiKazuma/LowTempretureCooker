@@ -3,6 +3,8 @@ void heater_init(void){
 }
 
 void heater_on(void){
+  
+        Serial.println("heater on");
   digitalWrite(12,HIGH);
 }
 void heater_off(void){

@@ -17,24 +17,24 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define LOGO_HEIGHT 16
 #define LOGO_WIDTH 16
 
+#define LCD_LINE (3)
+
 uint16_t lcd_temp;
 uint16_t lcd_timer;
-char line1[16];
-char line2[16];
+
 uint8_t lcd_flag = 0;
-/*
-* 0 : enable main function
-* 1 : updated flag
-*/
+uint8_t lcd_content[3];
 
 void lcd_init(void) {
-  Serial.println("lcd_init");
   lcd_flag = 0;
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));
     for (;;)
       ;  // Don't proceed, loop forever
+  }
+  for (int i = 0; i < LCD_LINE; i++) {
+    lcd_content[i] = LC_NONE;
   }
   display.clearDisplay();
   display.setTextSize(2);               // Normal 1:1 pixel scale
