@@ -2,7 +2,9 @@
 #define _CONTROLER_H_
 enum {
   ST_INIT,
+  ST_TO_SETTING,
   ST_SETTING,
+  ST_TO_RUNNING,
   ST_RUNNING,
   ST_STOP,
   ST_ERROR

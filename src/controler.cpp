@@ -78,17 +78,27 @@ void ctrl_main(void)
     ctrl_heater_off();
     ctrl_timer = 60 * 60 * 3;
     prm_select = PRM_TEMP;
+
+    lcd_set_content(0, LC_STM);
+
     if (sensor_check_state() == 1)
     {
-      lcd_set_content(0, LC_STM);
-      lcd_set_content(1, LC_TEMP);
-      lcd_set_content(2, LC_TIMER);
-      lcd_set_content(3, LC_HEATER_STATE);
-      timer_set(ctrl_timer);
-      lcd_set_timer(ctrl_timer);
-      stm = ST_SETTING;
+      stm = ST_TO_SETTING;
     }
     break;
+  case ST_TO_SETTING:
+    lcd_set_content(0, LC_STM);
+    lcd_set_content(1, LC_TEMP);
+    lcd_set_content(2, LC_TIMER);
+    lcd_set_content(3, LC_HEATER_STATE);
+    timer_set(ctrl_timer);
+    lcd_set_timer(ctrl_timer);
+    prm_select=PRM_TEMP;
+    lcd_set_blink(1);
+    lcd_set_tempreture(exp_tempreture);
+    stm = ST_SETTING;
+    break;
+
   case ST_SETTING:
     if (ctrl_sw_state[SW_CANCEL] == SW_PUSHED)
     {
@@ -96,8 +106,7 @@ void ctrl_main(void)
     }
     if (ctrl_sw_state[SW_OK])
     {
-      timer_start();
-      stm = ST_RUNNING;
+      stm = ST_TO_RUNNING;
     }
 
     switch (prm_select)
@@ -105,6 +114,7 @@ void ctrl_main(void)
     case PRM_TEMP:
       if (ctrl_sw_state[SW_CANCEL] == SW_LONG_PUSH)
       {
+        lcd_set_blink(2);
         prm_select = PRM_TIMER;
       }
       if (ctrl_sw_state[SW_UP])
@@ -112,6 +122,7 @@ void ctrl_main(void)
         if (exp_tempreture < 1000)
         {
           exp_tempreture += 10;
+          lcd_set_tempreture(exp_tempreture);
         }
       }
       if (ctrl_sw_state[SW_DOWN])
@@ -119,14 +130,15 @@ void ctrl_main(void)
         if (exp_tempreture > 0)
         {
           exp_tempreture -= 10;
+          lcd_set_tempreture(exp_tempreture);
         }
       }
-      lcd_set_tempreture(exp_tempreture);
 
       break;
     case PRM_TIMER:
       if (ctrl_sw_state[SW_CANCEL] == SW_LONG_PUSH)
       {
+        lcd_set_blink(1);
         prm_select = PRM_TEMP;
       }
       if (ctrl_sw_state[SW_UP])
@@ -134,6 +146,7 @@ void ctrl_main(void)
         if (ctrl_timer < 6 * 60 * 60)
         {
           ctrl_timer += 600;
+          lcd_set_timer(ctrl_timer);
         }
       }
       if (ctrl_sw_state[SW_DOWN])
@@ -141,9 +154,9 @@ void ctrl_main(void)
         if (ctrl_timer > 0)
         {
           ctrl_timer -= 600;
+          lcd_set_timer(ctrl_timer);
         }
       }
-      lcd_set_timer(ctrl_timer);
       break;
 
     default:
@@ -152,6 +165,14 @@ void ctrl_main(void)
     }
 
     break;
+
+  case ST_TO_RUNNING:
+    timer_set(ctrl_timer);
+    timer_start();
+    lcd_stop_blink();
+    stm = ST_RUNNING;
+    break;
+
   case ST_RUNNING:
     ctrl_update_timer();
     ctrl_update_temp();
@@ -161,7 +182,7 @@ void ctrl_main(void)
     {
       ctrl_heater_off();
       timer_stop();
-      stm = ST_SETTING;
+      stm = ST_TO_SETTING;
     }
     break;
   case ST_STOP:
