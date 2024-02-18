@@ -9,17 +9,28 @@ void lcd_print_timer(void);
 void lcd_print_stm(void);
 void lcd_print_heater_state(void);
 void lcd_print_content(uint8_t content);
+void lcd_update_blink(void);
+
+struct s_lcd_flag
+{
+  unsigned update : 5;
+  unsigned en_blink : 1;
+  unsigned st_blink : 1;
+};
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+s_lcd_flag lcd_flag;
 uint16_t lcd_temp;
 uint16_t lcd_timer;
 uint8_t lcd_heater_state;
-uint8_t lcd_flag = 0;
+uint8_t lcd_blink_line;
+uint8_t lcd_blink_cnt;
 uint8_t lcd_contents[LCD_ROW];
 
 void lcd_init(void)
 {
-  lcd_flag = 0;
+  lcd_flag.update = 0;
+  lcd_flag.st_blink = 0;
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS))
   {
@@ -42,33 +53,47 @@ void lcd_init(void)
 
 void lcd_main(void)
 {
-  display.clearDisplay();
-
-  for (uint8_t i = 0; i < LCD_ROW; i++)
+  lcd_update_blink();
+  if (lcd_flag.update)
   {
-    display.setCursor(0, i * 10);
-    lcd_print_content(lcd_contents[i]);
+    display.clearDisplay();
+    for (uint8_t i = 0; i < LCD_ROW; i++)
+    {
+      if (lcd_flag.en_blink == 1 && lcd_blink_line == i)
+      {
+        if (lcd_flag.st_blink == 1)
+        {
+          display.setCursor(0, i * 10);
+          lcd_print_content(lcd_contents[i]);
+        }
+      }
+      else
+      {
+        display.setCursor(0, i * 10);
+        lcd_print_content(lcd_contents[i]);
+      }
+    }
+    display.display();
+    lcd_flag.update = 0;
   }
-  display.display();
-  lcd_flag = 0;
 }
 
 void lcd_set_tempreture(uint16_t temp)
 {
   lcd_temp = temp;
-  lcd_flag |= 1;
+  lcd_flag.update |= 0x01;
 }
 
 void lcd_set_timer(uint16_t timer)
 {
   lcd_timer = timer;
-  lcd_flag |= 2;
+  lcd_flag.update |= 0x02;
 }
 
 void lcd_set_heater_state(uint8_t on_off)
 {
-  lcd_heater_state=on_off;
-  lcd_flag |=4;
+  lcd_heater_state = on_off;
+  lcd_flag.update |= 0x04;
 }
 
 void lcd_set_content(uint8_t line, uint8_t content)
@@ -76,6 +101,7 @@ void lcd_set_content(uint8_t line, uint8_t content)
   if (line < LCD_ROW)
   {
     lcd_contents[line] = content;
+    lcd_flag.update |= 0x08;
   }
 }
 
@@ -106,10 +132,22 @@ void lcd_print_content(uint8_t content)
   }
 }
 
+void lcd_set_blink(uint8_t line)
+{
+  lcd_flag.en_blink = 1;
+  lcd_blink_line = line;
+}
+void lcd_stop_blink(void)
+{
+  lcd_flag.en_blink = 0;
+  lcd_flag.st_blink = 0;
+  lcd_blink_cnt = 0;
+}
+
 void lcd_print_temp(void)
 {
   display.print("Temp :");
-  display.print(lcd_temp /10);
+  display.print(lcd_temp / 10);
   display.print(".");
   display.print(lcd_temp % 10);
   display.print(" C");
@@ -147,7 +185,7 @@ void lcd_print_stm(void)
   switch (ctrl_get_stm())
   {
   case ST_INIT:
-    display.print("INIT");
+    display.print("INIT check sensor");
     break;
   case ST_SETTING:
     display.print("SETTING");
@@ -166,11 +204,28 @@ void lcd_print_stm(void)
   }
 }
 
-void lcd_print_heater_state(void){
-  if(lcd_heater_state){
+void lcd_print_heater_state(void)
+{
+  if (lcd_heater_state)
+  {
     display.print("POWER:ON");
-  }else{
-    display.print("POWER:OFF");  
   }
+  else
+  {
+    display.print("POWER:OFF");
+  }
+}
 
+void lcd_update_blink(void)
+{
+  if (lcd_flag.en_blink)
+  {
+    if (lcd_blink_cnt > BLINK_CYCLE)
+    {
+      lcd_blink_cnt = 0;
+      lcd_flag.st_blink ^= 1;
+      lcd_flag.update |= 1;
+    }
+    lcd_blink_cnt++;
+  }
 }
